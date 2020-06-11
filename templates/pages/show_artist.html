@@ -1,0 +1,85 @@
+{% extends 'layouts/main.html' %}
+{% block title %}{{ artist.name }} | Artist{% endblock %}
+{% block content %}
+<div class="row">
+	<div class="col-sm-6">
+		<h1 class="monospace">
+			{{ artist.name }}
+		</h1>
+		<p class="subtitle">
+			ID: {{ artist.id }}
+		</p>
+		<div class="genres">
+			{% for genre in artist.genres %}
+			<span class="genre">{{ genre }}</span>
+			{% endfor %}
+			<!-- <span class='genre'>{{ artist.genres }}</span> -->
+		</div>
+		<p>
+			<i class="fas fa-globe-americas"></i> {{ artist.city }}, {{ artist.state }}
+		</p>
+		<p>
+			<i class="fas fa-phone-alt"></i> {% if artist.phone %}{{ artist.phone }}{% else %}No Phone{% endif %}
+        </p>
+        <p>
+			<i class="fas fa-link"></i> {% if artist.website_link %}<a href="{{ artist.website_link }}" target="_blank">{{ artist.website_link }}</a>{% else %}No Website{% endif %}
+		</p>
+		<p>
+			<i class="fab fa-facebook-f"></i> {% if artist.facebook_link %}<a href="{{ artist.facebook_link }}" target="_blank">{{ artist.facebook_link }}</a>{% else %}No Facebook Link{% endif %}
+        </p>
+		{% if artist.seeking_venue %}
+		<div class="seeking">
+			<p class="lead">Currently seeking performance venues</p>
+			<div class="description">
+				<i class="fas fa-quote-left"></i> {{ artist.seeking_description }} <i class="fas fa-quote-right"></i>
+			</div>
+		</div>
+		{% else %}	
+		<p class="not-seeking">
+			<i class="fas fa-moon"></i> Not currently seeking performance venues
+		</p>
+		{% endif %}
+	</div>
+	<div class="col-sm-6">
+		{% if artist.image_link %}
+		<img src="{{ artist.image_link }}" alt="Artist Image" />
+		{% else %}
+		<img src="https://img.icons8.com/dusk/64/000000/no-camera.png" alt="No Image" />
+		{% endif %}
+	</div>
+</div>
+<section>
+	<h2 class="monospace">{{ artist.upcoming_show_count }} Upcoming {% if artist.upcoming_show_count == 1 %}Show{% else %}Shows{% endif %}</h2>
+	<div class="row">
+		{% for show in artist.shows %}
+		{% if show.date|upcomingcheck %}
+		<div class="col-sm-4">
+			<div class="tile tile-show">
+				<img src="{{ show.venues.image_link }}" alt="Show Venue Image" />
+				<h5><a href="/venues/{{ show.venue_id }}">{{ show.venues.name }}</a></h5>
+				<h6>{{ show.date }}</h6>
+			</div>
+		</div>
+		{% endif %}
+		{% endfor %}
+	</div>
+</section>
+<section>
+	<h2 class="monospace">{{ artist.past_show_count }} Past {% if artist.past_show_count == 1 %}Show{% else %}Shows{% endif %}</h2>
+	<div class="row">
+		{% for show in artist.shows %}
+		{% if show.date|upcomingcheck == False %}
+		<div class="col-sm-4">
+			<div class="tile tile-show">
+				<img src="{{ show.venues.image_link }}" alt="Show Venue Image" />
+				<h5><a href="/venues/{{ show.venue_id }}">{{ show.venues.name }}</a></h5>
+				<h6>{{ show.date|datetime('full') }}</h6>
+			</div>
+		</div>
+		{% endif %}
+		{% endfor %}
+	</div>
+</section>
+
+{% endblock %}
+
